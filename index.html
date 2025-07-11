@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>GeoEstate - Real Estate Map</title>
+  <link rel="stylesheet" href="style.css" />
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css"
+  />
+</head>
+<body>
+  <div id="sidebar">
+    <h2>Submit Property</h2>
+    <form id="property-form">
+      <label>Name:<br><input type="text" id="name" required /></label><br>
+      <label>Owner:<br><input type="text" id="owner" required /></label><br>
+      <label>Price:<br><input type="number" id="price" required /></label><br>
+      <label>Area (sq ft):<br><input type="number" id="area" required /></label><br>
+      <label>Description:<br><textarea id="description"></textarea></label><br>
+      <button type="submit">Submit Plot</button>
+    </form>
+
+    <h3>Saved Properties</h3>
+    <div id="plot-list"></div>
+  </div>
+
+  <div id="map"></div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
