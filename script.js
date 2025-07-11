@@ -1,34 +1,27 @@
-// Import the functions from Firebase Modular SDK
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
-
-// Firebase configuration
+// ✅ Firebase config and initialization (using compat SDK)
 const firebaseConfig = {
   apiKey: "AIzaSyCLldNdHTfWzARUOr2fOKjyNZKupFre1aQ",
   authDomain: "geoestate-5f083.firebaseapp.com",
   projectId: "geoestate-5f083",
-  storageBucket: "geoestate-5f083.appspot.com", // ✅ Fixed ".app" to ".com"
+  storageBucket: "geoestate-5f083.appspot.com",
   messagingSenderId: "574587955628",
   appId: "1:574587955628:web:41de528cd618f03761b209",
   measurementId: "G-F0STEWZN4G"
 };
 
-// Initialize Firebase and modules
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-const auth = getAuth(app);
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
 
-// SheetDB URL (replace with actual)
+// ✅ SheetDB API (replace with your real URL)
 const sheetdbUrl = "https://sheetdb.io/api/v1/YOUR_SHEETDB_URL";
 
-// Setup map (Leaflet)
+// ✅ Initialize Leaflet map
 var map = L.map("map").setView([20.5937, 78.9629], 5);
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   attribution: "© OpenStreetMap contributors",
 }).addTo(map);
 
-// Draw controls
+// ✅ Drawing control
 var drawnItems = new L.FeatureGroup();
 map.addLayer(drawnItems);
 
@@ -48,13 +41,14 @@ var drawControl = new L.Control.Draw({
 map.addControl(drawControl);
 
 var currentDrawnLayer = null;
+
 map.on(L.Draw.Event.CREATED, function (e) {
-  drawnItems.clearLayers();
+  drawnItems.clearLayers(); // Allow only one
   currentDrawnLayer = e.layer;
   drawnItems.addLayer(currentDrawnLayer);
 });
 
-// Submit form
+// ✅ Handle form submission
 document.getElementById("property-form").addEventListener("submit", function (e) {
   e.preventDefault();
 
@@ -97,7 +91,7 @@ document.getElementById("property-form").addEventListener("submit", function (e)
     .catch((err) => alert("Error: " + err));
 });
 
-// Load existing plots
+// ✅ Load existing plots
 function loadPlots() {
   fetch(sheetdbUrl)
     .then((res) => res.json())
@@ -106,6 +100,7 @@ function loadPlots() {
       drawnItems.clearLayers();
 
       rows.forEach((row) => {
+        if (!row.Coordinates) return;
         var coords = JSON.parse(row.Coordinates);
         var latlngs = coords[0].map((pt) => [pt[1], pt[0]]);
         var polygon = L.polygon(latlngs, { color: "blue" }).addTo(drawnItems);
@@ -122,24 +117,25 @@ function loadPlots() {
 
 loadPlots();
 
-// Handle login
+// ✅ Handle login
 function loginUser() {
   const email = document.getElementById("login-email").value;
   const password = document.getElementById("login-password").value;
 
-  signInWithEmailAndPassword(auth, email, password)
+  auth.signInWithEmailAndPassword(email, password)
     .then(() => {
       document.getElementById("login-status").innerText = "Login successful!";
       document.getElementById("property-form").style.display = "block";
       document.getElementById("login-box").style.display = "none";
+      document.getElementById("loginModal").style.display = "none";
     })
     .catch((error) => {
-      document.getElementById("login-status").innerText = "Login failed.";
+      document.getElementById("login-status").innerText = "Login failed: " + error.message;
     });
 }
 
-// Auth state observer
-onAuthStateChanged(auth, (user) => {
+// ✅ Show/hide login on state change
+auth.onAuthStateChanged((user) => {
   if (user) {
     document.getElementById("property-form").style.display = "block";
     document.getElementById("login-box").style.display = "none";
