@@ -107,4 +107,62 @@ function loadPlots() {
     });
 }
 
-loadPlots();
+loadPlots();function loginUser() {
+  var email = document.getElementById("login-email").value;
+  var password = document.getElementById("login-password").value;
+
+  firebase.auth().signInWithEmailAndPassword(email, password)
+    .then((userCredential) => {
+      document.getElementById("login-status").innerText = "Login successful!";
+      document.getElementById("property-form").style.display = "block";
+      document.getElementById("login-box").style.display = "none";
+    })
+    .catch((error) => {
+      document.getElementById("login-status").innerText = "Login failed.";
+    });
+}
+
+firebase.auth().onAuthStateChanged((user) => {
+  if (user) {
+    document.getElementById("property-form").style.display = "block";
+    document.getElementById("login-box").style.display = "none";
+  } else {
+    document.getElementById("property-form").style.display = "none";
+    document.getElementById("login-box").style.display = "block";
+  }
+});
+// Your Firebase config
+const firebaseConfig = {
+  apiKey: "PASTE_YOUR_API_KEY",
+  authDomain: "your-project-id.firebaseapp.com",
+  projectId: "your-project-id",
+  storageBucket: "your-project-id.appspot.com",
+  messagingSenderId: "xxxxxxxxxxx",
+  appId: "xxxxxxxxxxxxxxxxxxxx"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+// Handle login
+function login() {
+  const email = document.querySelector('input[type="email"]').value;
+  const password = document.querySelector('input[type="password"]').value;
+
+  firebase.auth().signInWithEmailAndPassword(email, password)
+    .then((userCredential) => {
+      document.getElementById("loginModal").style.display = "none";
+    })
+    .catch((error) => {
+      document.getElementById("loginError").innerText = "Login failed: " + error.message;
+    });
+}
+
+// Auto-hide login modal if already logged in
+firebase.auth().onAuthStateChanged((user) => {
+  if (user) {
+    document.getElementById("loginModal").style.display = "none";
+  } else {
+    document.getElementById("loginModal").style.display = "flex";
+  }
+});
+
